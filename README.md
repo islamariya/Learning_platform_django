@@ -12,7 +12,7 @@ Category of Courses
 ![Screenshot](img/categories.png)
 
 Courses 
-![Screenshot](iimg/courses.png)
+![Screenshot](img/courses.png)
 
 StudyPlan for each Course 
 ![Screenshot](img/study_plan.png)
