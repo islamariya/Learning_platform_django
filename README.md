@@ -4,7 +4,7 @@ Nowadays consists of 2 apps:
 - course
 - user_profile
 
-Custom model without username is used. 
+Custom User model without username is used. 
 
 Here are some examples of admin panel
 
