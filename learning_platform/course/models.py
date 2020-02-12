@@ -28,7 +28,8 @@ class Course(models.Model):
     course_title = models.CharField(max_length=70, blank=False, verbose_name='Наименование курса')
     course_slug = models.SlugField(max_length=200, verbose_name='Слег')
     is_course_active = models.BooleanField(default=False, verbose_name='Курс доступен')
-    category = models.ForeignKey(CourseCategories, on_delete=models.CASCADE, verbose_name='Категория')
+    category = models.ForeignKey(CourseCategories, on_delete=models.CASCADE, related_name='categories',
+                                 verbose_name='Категория')
     course_short_description = models.CharField(max_length=300, verbose_name='Краткое описание')
     course_overview = models.TextField(verbose_name='Описание')
     course_duration = models.CharField(max_length=100, verbose_name='Продолжительность')
@@ -54,7 +55,8 @@ class CourseStudyPlan(models.Model):
     Specific data like tutor, date will be provided in CourseFlowTimetable."""
     lesson_title = models.CharField(max_length=100, blank=False, verbose_name='Тема занятия')
     lesson_number = models.IntegerField(verbose_name='Порядковый Номер занятия в курсе')
-    course_attached = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
+    course_attached = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='study_plans',
+                                        verbose_name='Курс')
     lesson_description = models.TextField(verbose_name='Описание занятия')
     is_lesson_active = models.BooleanField(verbose_name='Доступность', default=False)
     lesson_version = models.IntegerField(verbose_name='Версия урока', default=1)
@@ -71,9 +73,10 @@ class CourseStudyPlan(models.Model):
 class CourseFlows(models.Model):
     """This class represents each launch of course. Course code is should have a abbreviation of course tile and
     start date (like, PHP 10.2019) """
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='course_flows', verbose_name='Курс')
     course_start_date = models.DateField(blank=False, verbose_name='Дата начала')
-    course_curator = models.ForeignKey(MyUser, on_delete=models.CASCADE, verbose_name='Куратор')
+    course_curator = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='course_flows',
+                                       verbose_name='Куратор')
     course_code = models.CharField(max_length=50, unique=True, verbose_name='Код потока')
     is_course_over = models.BooleanField(default=False, verbose_name='Поток завершен')
 
@@ -90,7 +93,8 @@ class Homework(models.Model):
     """This class represents homework, that should be done during each course flow. """
     homework_title = models.CharField(verbose_name='Название', max_length=200, blank=False)
     homework_number = models.IntegerField(verbose_name='Порядковый номер в курсе', default=1)
-    course_flow_attached = models.ForeignKey(CourseFlows, on_delete=models.CASCADE, verbose_name='Поток курса')
+    course_flow_attached = models.ForeignKey(CourseFlows, on_delete=models.CASCADE, related_name='homework',
+                                             verbose_name='Поток курса')
     homework_description = models.TextField(verbose_name='Описание')
     due_date = models.DateField(verbose_name='Срок сдачи')
     is_homework_active = models.BooleanField(verbose_name='Доступность', default=False)
@@ -98,7 +102,6 @@ class Homework(models.Model):
     class Meta:
         verbose_name = 'Домашнее задание'
         verbose_name_plural = 'Домашние задания'
-        ordering = []
 
     def __str__(self):
         return f'№{self.homework_number} {self.homework_title} {self.course_flow_attached}'
@@ -106,8 +109,10 @@ class Homework(models.Model):
 
 class StudentsInCourseFlow(models.Model):
     """This class represents Students in each Course Flow."""
-    course_code = models.ForeignKey(CourseFlows, on_delete=models.CASCADE, verbose_name='Поток курса')
-    student = models.ForeignKey(MyUser, on_delete=models.CASCADE, verbose_name='Студент')
+    course_code = models.ForeignKey(CourseFlows, on_delete=models.CASCADE, related_name='students_in_flow',
+                                    verbose_name='Поток курса')
+    student = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='students_in_flow',
+                                verbose_name='Студент')
     start_learning_date = models.DateField(verbose_name='Дата начала обучения')
     is_student_active = models.BooleanField(default=True, verbose_name='Учится')
 
@@ -126,9 +131,12 @@ class StudentsAcademicPerformance(models.Model):
                                ("SEND_TO_REWORK", "send to rework"),
                                ("COMPLETE", "complete")
                                )
-    course_code = models.ForeignKey(CourseFlows, on_delete=models.CASCADE, verbose_name='Поток курса')
-    student = models.ForeignKey(StudentsInCourseFlow, on_delete=models.CASCADE, verbose_name='Студент')
-    homework_id = models.ForeignKey(Homework, on_delete=models.CASCADE, verbose_name='Дом задание')
+    course_code = models.ForeignKey(CourseFlows, on_delete=models.CASCADE, related_name='students_homework',
+                                    verbose_name='Поток курса')
+    student = models.ForeignKey(StudentsInCourseFlow, on_delete=models.CASCADE, related_name='students_homework',
+                                verbose_name='Студент')
+    homework_id = models.ForeignKey(Homework, on_delete=models.CASCADE, related_name='students_homework',
+                                    verbose_name='Дом задание')
     date_of_completion = models.DateField(blank=True, null=True, verbose_name='Факт дата сдачи')
     homework_status = models.CharField(max_length=20, choices=HOMEWORK_STATUS_CHOICES, default="NOT_DONE",
                                        verbose_name='Статус работы')
@@ -144,8 +152,10 @@ class StudentsAcademicPerformance(models.Model):
 
 class CourseFlowTimetable(models.Model):
     """This class represents timetable of each Course Flow."""
-    lesson_id = models.ForeignKey(CourseStudyPlan, on_delete=models.CASCADE, verbose_name='Номер занятия')
-    course_flow = models.ForeignKey(CourseFlows, on_delete=models.CASCADE, verbose_name='Поток курса')
+    lesson_id = models.ForeignKey(CourseStudyPlan, on_delete=models.CASCADE, related_name='courseflow_timetable',
+                                  verbose_name='Номер занятия')
+    course_flow = models.ForeignKey(CourseFlows, on_delete=models.CASCADE, related_name='courseflow_timetable',
+                                    verbose_name='Поток курса')
     lesson_date = models.DateTimeField(verbose_name='Дата занятия')
     lesson_teacher = models.ForeignKey(MyUser, on_delete=models.CASCADE, verbose_name='Преподаватель')
 
