@@ -9,25 +9,25 @@ Within this homework Django Models are created.
 Here are some examples of admin panel
 
 Category of Courses
-![Screenshot](img/categories.png)
+![Screenshot](learning_platform/static/readme_img/categories.png)
 
 Courses 
-![Screenshot](img/courses.png)
+![Screenshot](learning_platform/static/readme_img/courses.png)
 
 StudyPlan for each Course 
-![Screenshot](img/study_plan.png)
+![Screenshot](learning_platform/static/readme_img/study_plan.png)
 
 Course Flows
-![Screenshot](img/courses_flows.png)
+![Screenshot](learning_platform/static/readme_img/courses_flows.png)
 
 Homeworks for Course Flows 
-![Screenshot](img/homeworks.png)
+![Screenshot](learning_platform/static/readme_img/homeworks.png)
 
 Students in each CourseFlow 
-![Screenshot](img/students_in_flow.png)
+![Screenshot](learning_platform/static/readme_img/students_in_flow.png)
 
 Students Academic Performance in each Course Flow
-![Screenshot](img/students_academic_performance.png)
+![Screenshot](learning_platform/static/readme_img/students_academic_performance.png)
 
 Timetable for each Course Flow
-![Screenshot](img/timetable.png)
+![Screenshot](learning_platform/static/readme_img/timetable.png)
