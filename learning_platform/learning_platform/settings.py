@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
-    'user_profile.apps.UserProfileConfig',
+    'my_user.apps.MyUserConfig',
     'course.apps.CourseConfig',
 ]
 
@@ -98,4 +98,4 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-AUTH_USER_MODEL = 'user_profile.MyUser'
+AUTH_USER_MODEL = 'my_user.MyUser'
